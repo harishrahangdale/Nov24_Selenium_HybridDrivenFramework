@@ -5,13 +5,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import base.ControlActions;
+import base.TestConfigs;
 import pages.DashboardPage;
 import pages.LoginPage;
 
 public class DashboardTest {
-    private static final String VALID_USERNAME = "hsr.29978@gmail.com";
-    private static final String VALID_PASSWORD = "Pass@123";
-
     /**
      * Sets up the test environment by launching the browser and logging in.
      */
@@ -28,10 +26,10 @@ public class DashboardTest {
         softAssert.assertAll(); // Ensure login page loads before proceeding
 
         System.out.println("STEP - Enter username");
-        loginPage.enterUsername(VALID_USERNAME);
+        loginPage.enterUsername(TestConfigs.VALID_USERNAME);
 
         System.out.println("STEP - Enter password");
-        loginPage.enterPassword(VALID_PASSWORD);
+        loginPage.enterPassword(TestConfigs.VALID_PASSWORD);
 
         System.out.println("STEP - Click on login button");
         loginPage.clickLoginButton();

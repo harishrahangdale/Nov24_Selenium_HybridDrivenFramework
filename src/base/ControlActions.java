@@ -10,7 +10,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class ControlActions {
     protected static WebDriver driver;
     protected static WebDriverWait wait;
-    public static final String BASE_URL = "https://staging.app.hirecorrecto.com";
 
     /**
      * Launches a Chrome browser instance and navigates to the base URL.
@@ -20,7 +19,7 @@ public class ControlActions {
         driver = new ChromeDriver();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.manage().window().maximize();
-        driver.get(BASE_URL);
+        driver.get(TestConfigs.BASE_URL);
     }
 
     /**

@@ -1,0 +1,17 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="HireCorrectoTestSuite" verbose="1">
+    <test name="LoginAndDashboardTests">
+        <classes>
+            <class name="testscripts.LoginTest">
+                <methods>
+                    <include name="verifyValidLoginCredentials" />
+                </methods>
+            </class>
+            <class name="testscripts.DashboardTest">
+                <methods>
+                    <include name="verifyDashboardPage" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
