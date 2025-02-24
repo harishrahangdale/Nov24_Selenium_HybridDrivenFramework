@@ -1,50 +1,48 @@
 package testscripts;
 
-import java.time.Duration;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import base.ControlActions;
+import pages.DashboardPage;
+import pages.LoginPage;
 
 public class LoginTest {
+    private static final String VALID_USERNAME = "hsr.29978@gmail.com";
+    private static final String VALID_PASSWORD = "Pass@123";
+    private static final String EXPECTED_DASHBOARD_URL = "https://staging.app.hirecorrecto.com/dashboard";
 
-	@Test(invocationCount = 5)
-	public void verifyValidLoginCredentials() {
-		System.out.println("STEP - Open chrome browser and load https://staging.app.hirecorrecto.com");
-		WebDriver driver = new ChromeDriver();
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		driver.manage().window().maximize();
-		driver.get("https://staging.app.hirecorrecto.com");
+    /**
+     * Verifies login functionality with valid credentials.
+     * Runs 5 times as specified by invocationCount.
+     * Tests page load, credential entry, and dashboard navigation.
+     */
+    @Test(invocationCount = 5)
+    public void verifyValidLoginCredentials() {
+        System.out.println("STEP - Open chrome browser and load https://staging.app.hirecorrecto.com");
+        ControlActions.launchBrowser();
 
-		System.out.println("VERIFY - Login page is loaded.");
-		WebElement loginButton = wait
-				.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@type='submit']")));
+        LoginPage loginPage = new LoginPage();
 
-		boolean loginButtonFlag = loginButton.isEnabled();
-		Assert.assertTrue(loginButtonFlag);
+        System.out.println("VERIFY - Login page is loaded");
+        Assert.assertTrue(loginPage.waitForPageLoad(), "Login page failed to load");
 
-		System.out.println("STEP - Enter username");
-		driver.findElement(By.xpath("//input[@id='outlined-adornment-email']")).sendKeys("hsr.29978@gmail.com");
+        System.out.println("STEP - Enter username");
+        loginPage.enterUsername(VALID_USERNAME);
 
-		System.out.println("STEP - Enter password");
-		driver.findElement(By.xpath("//input[@id='outlined-adornment-password']")).sendKeys("Pass@123");
+        System.out.println("STEP - Enter password");
+        loginPage.enterPassword(VALID_PASSWORD);
 
-		System.out.println("STEP - Click on login button");
-		driver.findElement(By.xpath("//button[@type='submit']")).click();
+        System.out.println("STEP - Click on login button");
+        loginPage.clickLoginButton();
 
-		System.out.println(
-				"VERFIY - Dashboard page is displyed in case of correct credentials, \\\"Invalid credtentials\\\" message in case of invalid credentials.");
+        System.out.println("VERIFY - Dashboard page is displayed for valid credentials");
+        DashboardPage dashboardPage = new DashboardPage();
+        dashboardPage.waitForPageLoad();
 
-		wait.until(ExpectedConditions.urlContains("dashboard"));
-		String expectedUrl = "https://staging.app.hirecorrecto.com/dashboard";
-		String actualUrl = driver.getCurrentUrl();
-		Assert.assertTrue(actualUrl.startsWith(expectedUrl));
+        String actualUrl = dashboardPage.getCurrentUrl();
+        Assert.assertTrue(actualUrl.startsWith(EXPECTED_DASHBOARD_URL), 
+            "Expected URL to start with: " + EXPECTED_DASHBOARD_URL + ", but got: " + actualUrl);
 
-		driver.quit();
-	}
+        ControlActions.closeBrowser();
+    }
 }

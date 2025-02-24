@@ -1,97 +1,100 @@
 package testscripts;
 
-import java.time.Duration;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
+import base.ControlActions;
+import pages.DashboardPage;
+import pages.LoginPage;
 
 public class DashboardTest {
+    private static final String VALID_USERNAME = "hsr.29978@gmail.com";
+    private static final String VALID_PASSWORD = "Pass@123";
 
-	private WebDriver driver;
-	private WebDriverWait wait;
+    /**
+     * Sets up the test environment by launching the browser and logging in.
+     */
+    @BeforeMethod
+    public void setup() {
+        System.out.println("STEP - Open chrome browser and load https://staging.app.hirecorrecto.com");
+        ControlActions.launchBrowser();
 
-	@BeforeClass
-	public void setup() {
-		System.out.println("STEP - Open chrome browser and load https://staging.app.hirecorrecto.com");
-		driver = new ChromeDriver();
-		wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		driver.manage().window().maximize();
-		driver.get("https://staging.app.hirecorrecto.com");
+        LoginPage loginPage = new LoginPage();
 
-		System.out.println("VERIFY - Login page is loaded.");
-		WebElement loginButton = wait
-				.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@type='submit']")));
+        System.out.println("VERIFY - Login page is loaded.");
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertTrue(loginPage.waitForPageLoad(), "Login page failed to load");
+        softAssert.assertAll(); // Ensure login page loads before proceeding
 
-		boolean loginButtonFlag = loginButton.isEnabled();
-		Assert.assertTrue(loginButtonFlag);
+        System.out.println("STEP - Enter username");
+        loginPage.enterUsername(VALID_USERNAME);
 
-		System.out.println("STEP - Enter username");
-		driver.findElement(By.xpath("//input[@id='outlined-adornment-email']")).sendKeys("hsr.29978@gmail.com");
+        System.out.println("STEP - Enter password");
+        loginPage.enterPassword(VALID_PASSWORD);
 
-		System.out.println("STEP - Enter password");
-		driver.findElement(By.xpath("//input[@id='outlined-adornment-password']")).sendKeys("Pass@123");
+        System.out.println("STEP - Click on login button");
+        loginPage.clickLoginButton();
+    }
 
-		System.out.println("STEP - Click on login button");
-		driver.findElement(By.xpath("//button[@type='submit']")).click();
-	}
+    /**
+     * Verifies various elements on the dashboard page are displayed correctly using soft assertions.
+     * All assertions are collected and reported at the end of the test.
+     */
+    @Test
+    public void verifyDashboardPage() {
+        DashboardPage dashboardPage = new DashboardPage();
+        SoftAssert softAssert = new SoftAssert();
 
-	@Test
-	public void verifyDashboardPage() {
-		System.out.println("Verify - Dashboard page is loaded.");
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[text()='Hello, Welcome Back!!']")));
+        System.out.println("VERIFY - Dashboard page is loaded.");
+        softAssert.assertTrue(dashboardPage.waitForPageLoad(), "Dashboard page failed to load");
+        softAssert.assertTrue(dashboardPage.isWelcomeMessageVisible(), "Welcome message not visible");
 
-		System.out.println("Verify - Total Assessment title");
-		String totalAssessmentTitle = driver.findElement(By.xpath("//p[text()='Total Assessments']")).getText();
-		Assert.assertEquals(totalAssessmentTitle, "Total Assessments");
+        System.out.println("VERIFY - Total Assessments label");
+        softAssert.assertEquals(dashboardPage.getTotalAssessmentsLabel(), "Total Assessments",
+            "Total Assessments label mismatch");
 
-		System.out.println("Verify - Total Assessment Count");
-		WebElement totalAssessmentCount = driver
-				.findElement(By.xpath("//p[text()='Total Assessments']/following-sibling::h6"));
-		Assert.assertTrue(Integer.parseInt(totalAssessmentCount.getText()) >= 0);
+        System.out.println("VERIFY - Total Assessments Count");
+        softAssert.assertTrue(dashboardPage.getTotalAssessmentsCount() >= 0,
+            "Total Assessments count should be non-negative");
 
-		System.out.println("Verify - Total Appeared title");
-		String totalAppearedTitle = driver.findElement(By.xpath("//p[text()='Total Appeared']")).getText();
-		Assert.assertEquals(totalAppearedTitle, "Total Appeared");
+        System.out.println("VERIFY - Total Appeared label");
+        softAssert.assertEquals(dashboardPage.getTotalAppearedLabel(), "Total Appeared",
+            "Total Appeared label mismatch");
 
-		System.out.println("Verify - Total Appeared Count");
-		WebElement totalAppeared = driver
-				.findElement(By.xpath("//p[text()='Total Appeared']/following-sibling::h6"));
-		Assert.assertTrue(Integer.parseInt(totalAppeared.getText()) >= 0);
+        System.out.println("VERIFY - Total Appeared Count");
+        softAssert.assertTrue(dashboardPage.getTotalAppearedCount() >= 0,
+            "Total Appeared count should be non-negative");
 
-		System.out.println("Verify - Total Appeared title");
-		String totalQualifiedTitle = driver.findElement(By.xpath("//p[text()='Total Qualified']")).getText();
-		Assert.assertEquals(totalQualifiedTitle, "Total Qualified");
+        System.out.println("VERIFY - Total Qualified label");
+        softAssert.assertEquals(dashboardPage.getTotalQualifiedLabel(), "Total Qualified",
+            "Total Qualified label mismatch");
 
-		System.out.println("Verify - Total Qualified Count");
-		WebElement totalQualified = driver
-				.findElement(By.xpath("//p[text()='Total Qualified']/following-sibling::h6"));
-		Assert.assertTrue(totalQualified.getText().contains("%"));
+        System.out.println("VERIFY - Total Qualified Count");
+        softAssert.assertTrue(dashboardPage.getTotalQualifiedCount().contains("%"),
+            "Total Qualified count should contain percentage symbol");
 
-		System.out.println("Verify - View template title");
-		String viewTemplate = driver.findElement(By.xpath("//p[text()='View Template']")).getText();
-		Assert.assertEquals(viewTemplate, "View Template");
+        System.out.println("VERIFY - View Template label");
+        softAssert.assertEquals(dashboardPage.getViewTemplateLabel(), "View Template",
+            "View Template label mismatch");
 
-		System.out.println("Verify - Create Question title");
-		String createQuestion = driver.findElement(By.xpath("//p[text()='Create Question']")).getText();
-		Assert.assertEquals(createQuestion, "Create Question");
+        System.out.println("VERIFY - Create Question label");
+        softAssert.assertEquals(dashboardPage.getCreateQuestionLabel(), "Create Question",
+            "Create Question label mismatch");
 
-		System.out.println("Verify - Create Assessment title");
-		String createAssessment = driver.findElement(By.xpath("//p[text()='Create Assessment']")).getText();
-		Assert.assertEquals(createAssessment, "Create Assessment");
+        System.out.println("VERIFY - Create Assessment label");
+        softAssert.assertEquals(dashboardPage.getCreateAssessmentLabel(), "Create Assessment",
+            "Create Assessment label mismatch");
 
-	}
+        // Report all assertion failures at the end
+        softAssert.assertAll();
+    }
 
-	@AfterClass
-	public void teardown() {
-		driver.quit();
-	}
-
+    /**
+     * Tears down the test environment by closing the browser.
+     */
+    @AfterMethod
+    public void teardown() {
+        ControlActions.closeBrowser();
+    }
 }
