@@ -1,9 +1,11 @@
 package testscripts;
 
+import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
+
 import base.ControlActions;
 import base.TestConfigs;
 import pages.DashboardPage;
@@ -15,15 +17,13 @@ public class DashboardTest {
      */
     @BeforeMethod
     public void setup() {
-        System.out.println("STEP - Open chrome browser and load https://staging.app.hirecorrecto.com");
+        System.out.println("STEP - Open chrome browser and load " + TestConfigs.BASE_URL);
         ControlActions.launchBrowser();
 
         LoginPage loginPage = new LoginPage();
 
         System.out.println("VERIFY - Login page is loaded.");
-        SoftAssert softAssert = new SoftAssert();
-        softAssert.assertTrue(loginPage.waitForPageLoad(), "Login page failed to load");
-        softAssert.assertAll(); // Ensure login page loads before proceeding
+        Assert.assertTrue(loginPage.waitForPageLoad(), "Login page failed to load");
 
         System.out.println("STEP - Enter username");
         loginPage.enterUsername(TestConfigs.VALID_USERNAME);
