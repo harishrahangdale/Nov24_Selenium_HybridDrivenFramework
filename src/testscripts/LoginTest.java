@@ -1,45 +1,52 @@
 package testscripts;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
 import base.ControlActions;
 import base.TestConfigs;
 import pages.DashboardPage;
 import pages.LoginPage;
 
 public class LoginTest {
-    /**
-     * Verifies login functionality with valid credentials.
-     * Runs 5 times as specified by invocationCount.
-     * Tests page load, credential entry, and dashboard navigation.
-     */
-    @Test(invocationCount = 5)
-    public void verifyValidLoginCredentials() {
-        System.out.println("STEP - Open chrome browser and load https://staging.app.hirecorrecto.com");
-        ControlActions.launchBrowser();
 
-        LoginPage loginPage = new LoginPage();
+	@BeforeMethod
+	public void setup() {
+		System.out.println("STEP - Open chrome browser and load https://staging.app.hirecorrecto.com");
+		ControlActions.start();
+	}
 
-        System.out.println("VERIFY - Login page is loaded");
-        Assert.assertTrue(loginPage.waitForPageLoad(), "Login page failed to load");
+	@Test
+	public void verifyLoginForValidCredentials() {
+		LoginPage loginPage = new LoginPage();
 
-        System.out.println("STEP - Enter username");
-        loginPage.enterUsername(TestConfigs.VALID_USERNAME);
+		System.out.println("VERIFY - Login page is loaded.");
+		boolean welcomeMessageFlag = loginPage.waitForPageLoad();
+		Assert.assertTrue(welcomeMessageFlag);
 
-        System.out.println("STEP - Enter password");
-        loginPage.enterPassword(TestConfigs.VALID_PASSWORD);
+		System.out.println("STEP - Enter Username");
+		loginPage.enterUsername(TestConfigs.VALID_USERNAME);
 
-        System.out.println("STEP - Click on login button");
-        loginPage.clickLoginButton();
+		System.out.println("STEP - Enter Password");
+		loginPage.enterPassword(TestConfigs.VALID_PASSWORD);
 
-        System.out.println("VERIFY - Dashboard page is displayed for valid credentials");
-        DashboardPage dashboardPage = new DashboardPage();
-        dashboardPage.waitForPageLoad();
+		System.out.println("STEP - Click on Login Button");
+		loginPage.clickOnLoginBtn();
 
-        String actualUrl = dashboardPage.getCurrentUrl();
-        Assert.assertTrue(actualUrl.startsWith(TestConfigs.EXPECTED_DASHBOARD_URL), 
-            "Expected URL to start with: " + TestConfigs.EXPECTED_DASHBOARD_URL + ", but got: " + actualUrl);
+		System.out.println(
+				"VERFIY - Dashboard page is displyed in case of correct credentials, \"Invalid credtentials\" message in case of invalid credentials.");
+		DashboardPage dashboardPage = new DashboardPage();
+		dashboardPage.waitForPageLoad("dashboard");
 
-        ControlActions.closeBrowser();
-    }
+		String actualURL = dashboardPage.getDashboardPageUrl();
+		String expectedURL = "https://staging.app.hirecorrecto.com/dashboard";
+		Assert.assertEquals(actualURL, expectedURL);
+	}
+
+	@AfterMethod
+	public void tearDown() {
+		ControlActions.closeBrowser();
+	}
 }

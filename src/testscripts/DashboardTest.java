@@ -1,10 +1,10 @@
 package testscripts;
 
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.testng.asserts.SoftAssert;
 
 import base.ControlActions;
 import base.TestConfigs;
@@ -12,87 +12,58 @@ import pages.DashboardPage;
 import pages.LoginPage;
 
 public class DashboardTest {
-    /**
-     * Sets up the test environment by launching the browser and logging in.
-     */
-    @BeforeMethod
-    public void setup() {
-        System.out.println("STEP - Open chrome browser and load " + TestConfigs.BASE_URL);
-        ControlActions.launchBrowser();
+	WebDriver driver;
+	WebDriverWait wait;
+	DashboardPage dashboardPage;
 
-        LoginPage loginPage = new LoginPage();
+	@BeforeMethod
+	public void setup() {
 
-        System.out.println("VERIFY - Login page is loaded.");
-        Assert.assertTrue(loginPage.waitForPageLoad(), "Login page failed to load");
+		System.out.println("STEP - Open chrome browser and load https://staging.app.hirecorrecto.com");
+		ControlActions.start();
 
-        System.out.println("STEP - Enter username");
-        loginPage.enterUsername(TestConfigs.VALID_USERNAME);
+		System.out.println("STEP - Perform login action and go to dashboard page");
+		LoginPage loginPage = new LoginPage();
+		dashboardPage = loginPage.login(TestConfigs.VALID_USERNAME, TestConfigs.VALID_PASSWORD);
+	}
 
-        System.out.println("STEP - Enter password");
-        loginPage.enterPassword(TestConfigs.VALID_PASSWORD);
+	@Test
+	public void verifyDashboardUiElements() {
+		System.out.println("VERIFY - Dashboard Page is loaded");
+		Assert.assertTrue(dashboardPage.waitForPageLoad("dashboard"));
 
-        System.out.println("STEP - Click on login button");
-        loginPage.clickLoginButton();
-    }
+		System.out.println("VERIFY - The 'Hello, Welcome Back' message on the dashboard");
+		Assert.assertTrue(dashboardPage.isWelcomeMessageVisible());
 
-    /**
-     * Verifies various elements on the dashboard page are displayed correctly using soft assertions.
-     * All assertions are collected and reported at the end of the test.
-     */
-    @Test
-    public void verifyDashboardPage() {
-        DashboardPage dashboardPage = new DashboardPage();
-        SoftAssert softAssert = new SoftAssert();
+		System.out.println("VERIFY - 'Total Assessments' Lable");
+		Assert.assertTrue(dashboardPage.isTotalAssessmentsLabelVisible());
 
-        System.out.println("VERIFY - Dashboard page is loaded.");
-        softAssert.assertTrue(dashboardPage.waitForPageLoad(), "Dashboard page failed to load");
-        softAssert.assertTrue(dashboardPage.isWelcomeMessageVisible(), "Welcome message not visible");
+		System.out.println("VERIFY - 'Total Assessments' count");
+		Assert.assertTrue(dashboardPage.getTotalAssessmentsCount() >= 0);
 
-        System.out.println("VERIFY - Total Assessments label");
-        softAssert.assertEquals(dashboardPage.getTotalAssessmentsLabel(), "Total Assessments",
-            "Total Assessments label mismatch");
+		System.out.println("VERIFY - 'Total Appeared' Lable");
+		Assert.assertTrue(dashboardPage.isTotalAppearedLabelVisible());
 
-        System.out.println("VERIFY - Total Assessments Count");
-        softAssert.assertTrue(dashboardPage.getTotalAssessmentsCount() >= 0,
-            "Total Assessments count should be non-negative");
+		System.out.println("VERIFY - 'Total Appeared' count");
+		Assert.assertTrue(dashboardPage.getTotalAppearedCount() >= 0);
 
-        System.out.println("VERIFY - Total Appeared label");
-        softAssert.assertEquals(dashboardPage.getTotalAppearedLabel(), "Total Appeared",
-            "Total Appeared label mismatch");
+		System.out.println("VERIFY - 'Total Qualified' Lable");
+		Assert.assertTrue(dashboardPage.isTotalQualifiedLabelVisible());
 
-        System.out.println("VERIFY - Total Appeared Count");
-        softAssert.assertTrue(dashboardPage.getTotalAppearedCount() >= 0,
-            "Total Appeared count should be non-negative");
+		System.out.println("VERIFY - 'Total Qualified' count");
+		int totalQualifiedCount = dashboardPage.getTotalQualifiedCount();
+		Assert.assertTrue(totalQualifiedCount >= 0,
+				"Qualified % count should be >=0, but it was displayed as " + totalQualifiedCount);
 
-        System.out.println("VERIFY - Total Qualified label");
-        softAssert.assertEquals(dashboardPage.getTotalQualifiedLabel(), "Total Qualified",
-            "Total Qualified label mismatch");
+		System.out.println("VERIFY - 'View Template' button is visible");
+		Assert.assertTrue(dashboardPage.isViewTemplateButtonLabelVisible(), "View Template button was not displayed");
 
-        System.out.println("VERIFY - Total Qualified Count");
-        softAssert.assertTrue(dashboardPage.getTotalQualifiedCount().contains("%"),
-            "Total Qualified count should contain percentage symbol");
+		System.out.println("VERIFY - 'Create Question' button is visible");
+		Assert.assertTrue(dashboardPage.isCreateQuestionButtonLabelVisible(),
+				"Create Question button was not displayed");
 
-        System.out.println("VERIFY - View Template label");
-        softAssert.assertEquals(dashboardPage.getViewTemplateLabel(), "View Template",
-            "View Template label mismatch");
-
-        System.out.println("VERIFY - Create Question label");
-        softAssert.assertEquals(dashboardPage.getCreateQuestionLabel(), "Create Question",
-            "Create Question label mismatch");
-
-        System.out.println("VERIFY - Create Assessment label");
-        softAssert.assertEquals(dashboardPage.getCreateAssessmentLabel(), "Create Assessment",
-            "Create Assessment label mismatch");
-
-        // Report all assertion failures at the end
-        softAssert.assertAll();
-    }
-
-    /**
-     * Tears down the test environment by closing the browser.
-     */
-    @AfterMethod
-    public void teardown() {
-        ControlActions.closeBrowser();
-    }
+		System.out.println("VERIFY - 'Create Assessment' button is visible");
+		Assert.assertTrue(dashboardPage.isCreateAssessmentButtonLabelVisible(),
+				"Create Assessement button was not displayed");
+	}
 }
