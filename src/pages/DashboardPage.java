@@ -58,7 +58,8 @@ public class DashboardPage extends ControlActions {
 		return isElementDisplayed(LocatorType.XPATH, "//p[text()='Create Assessment']", false);
 	}
 
-	public void clickCreateQuestionButton() {
+	public CreateQuestionPage clickCreateQuestionButton() {
 		clickOnElement(LocatorType.XPATH, "//p[text()='Create Question']", false);
+		return new CreateQuestionPage();
 	}
 }
