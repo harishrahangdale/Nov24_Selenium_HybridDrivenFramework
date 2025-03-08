@@ -60,11 +60,11 @@ public class DashboardTest {
 		Assert.assertTrue(dashboardPage.isViewTemplateButtonLabelVisible(), "View Template button was not displayed");
 
 		System.out.println("VERIFY - 'Create Question' button is visible");
-		Assert.assertTrue(dashboardPage.isCreateQuestionButtonLabelVisible(),
+		Assert.assertTrue(dashboardPage.isCreateQuestionButtonDisplayed(),
 				"Create Question button was not displayed");
 
 		System.out.println("VERIFY - 'Create Assessment' button is visible");
-		Assert.assertTrue(dashboardPage.isCreateAssessmentButtonLabelVisible(),
+		Assert.assertTrue(dashboardPage.isCreateAssessmentButtonDisplayed(),
 				"Create Assessement button was not displayed");
 	}
 

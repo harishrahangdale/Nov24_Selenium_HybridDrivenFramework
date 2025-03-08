@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -148,12 +149,54 @@ public class ControlActions {
 		e.sendKeys(textToBeEntered);
 	}
 
+	protected void setText(WebElement e, boolean isWaitRequired, String textToBeEntered) {
+		if (isWaitRequired) {
+			wait.until(ExpectedConditions.visibilityOf(e));
+		}
+		if (!e.isDisplayed()) {
+			scrollToElement(e);
+		}
+		e.sendKeys(textToBeEntered);
+	}
+
 	protected void setText(LocatorType locatorType, String locatorValue, String textToBeEntered) {
 		setText(locatorType, locatorValue, false, textToBeEntered);
 	}
 
+	protected void clearText(LocatorType locatorType, String locatorValue) {
+		WebElement e = getElement(locatorType, locatorValue, true);
+		e.clear();
+	}
+
+	protected void pressBackSpace(LocatorType locatorType, String locatorValue) {
+		WebElement e = getElement(locatorType, locatorValue, true);
+		e.click();
+		e.sendKeys(Keys.BACK_SPACE);
+	}
+
+	protected void clearTextUsingBackSpace(LocatorType locatorType, String locatorValue, String text) {
+		if (text.length() > 0) {
+			WebElement e = getElement(locatorType, locatorValue, true);
+			e.click();
+			for (int index = 0; index < text.length(); index++) {
+				e.sendKeys(Keys.BACK_SPACE);
+			}
+		}
+	}
+
 	protected void clickOnElement(LocatorType locatorType, String locatorValue, boolean isWaitRequired) {
 		WebElement e = getElement(locatorType, locatorValue, isWaitRequired);
+		if (!e.isDisplayed()) {
+			scrollToElement(e);
+		}
+		wait.until(ExpectedConditions.elementToBeClickable(e));
+		e.click();
+	}
+
+	protected void clickOnElement(WebElement e, boolean isWaitRequired) {
+		if (isWaitRequired) {
+			wait.until(ExpectedConditions.visibilityOf(e));
+		}
 		if (!e.isDisplayed()) {
 			scrollToElement(e);
 		}
@@ -166,8 +209,22 @@ public class ControlActions {
 		return e.isDisplayed();
 	}
 
+	protected boolean isElementDisplayed(WebElement e, boolean isWaitRequired) {
+		if (isWaitRequired) {
+			wait.until(ExpectedConditions.visibilityOf(e));
+		}
+		return e.isDisplayed();
+	}
+
 	protected String getElementText(LocatorType locatorType, String locatorValue, boolean isWaitRequired) {
 		WebElement e = getElement(locatorType, locatorValue, isWaitRequired);
+		return e.getText();
+	}
+
+	protected String getElementText(WebElement e, boolean isWaitRequired) {
+		if (isWaitRequired) {
+			wait.until(ExpectedConditions.visibilityOf(e));
+		}
 		return e.getText();
 	}
 
