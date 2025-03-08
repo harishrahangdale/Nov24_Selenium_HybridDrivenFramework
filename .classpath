@@ -74,7 +74,7 @@
 	<classpathentry kind="lib" path="libs/selenium_jars/opentelemetry-sdk-trace-1.40.0-sources.jar"/>
 	<classpathentry kind="lib" path="libs/selenium_jars/opentelemetry-semconv-1.25.0-alpha.jar"/>
 	<classpathentry kind="lib" path="libs/selenium_jars/opentelemetry-semconv-1.25.0-alpha-sources.jar"/>
-	<classpathentry kind="lib" path="libs/selenium_jars/selenium-api-4.23.0.jar"/>
+	<classpathentry kind="lib" path="libs/selenium_jars/selenium-api-4.23.0.jar" sourcepath="libs/selenium_jars/selenium-api-4.23.0-sources.jar"/>
 	<classpathentry kind="lib" path="libs/selenium_jars/selenium-api-4.23.0-sources.jar"/>
 	<classpathentry kind="lib" path="libs/selenium_jars/selenium-chrome-driver-4.23.0.jar"/>
 	<classpathentry kind="lib" path="libs/selenium_jars/selenium-chrome-driver-4.23.0-sources.jar"/>
