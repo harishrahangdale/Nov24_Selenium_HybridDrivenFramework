@@ -106,10 +106,10 @@ public class CreateQuestionTest {
 		createQuestionPage.setLabel("Automation");
 
 		System.out.println("STEP - Select Skills");
-		createQuestionPage.setSkill("programming languages: java");
+		createQuestionPage.setSkill("debugging abilities");
 
 		System.out.println("STEP - Select Topics");
-		createQuestionPage.setTopic("object-oriented");
+		createQuestionPage.setTopic("stepping through code");
 
 		System.out.println("STEP - Click on publish button");
 		createQuestionPage.clickOnPublishBtn();

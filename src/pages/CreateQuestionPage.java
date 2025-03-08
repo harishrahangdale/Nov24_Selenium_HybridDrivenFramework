@@ -2,25 +2,60 @@ package pages;
 
 import java.util.List;
 
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
 import base.ControlActions;
 
 public class CreateQuestionPage extends ControlActions {
+
 	private String questionTypelocator = "//div[p[text()='%s']]/button";
-	private String allQuestionTypeTextLocator = "//div[p[contains(@class,'css-2dyhle')]]/button/following-sibling::p";
-	private String problemStatementLocator = "//div[@class='se-wrapper']//div";
 	private String difficultyLevelLocator = "//p[text()='%s']";
 	private String optionTextLocator = "//input[@placeholder='Option %d']";
-	private String addOptionBtnLocator = "//button[text()='+ Add Option']";
 	private String correctAnswerIndexLocator = "option-radio-%d";
-	private String labelTextLocator = "//input[@placeholder='Type a label and press Enter']";
-	private String skillInputLocator = "//input[@id='skills']";
 	private String selectSkillLocator = "//li[text()='%s']";
 	private String topicLocator = "//p[text()='%s']";
-	private String toastMessageLocator = "//div[text()='Question published successfully']";
-	private String problemTitleLocator = "//input[@placeholder='Enter Problem Title']";
-	private String scoreInputLocator = "score";
-	private String cancelBtnLocator = "//button[text()='Cancel']";
-	private String closeBtnLocator = "//div[@role='presentation']/div[contains(@class,'MuiPaper-root')]/div/div[1]//*[name()='svg']";
+
+	@FindBy(xpath = "//div[p[contains(@class,'css-2dyhle')]]/button/following-sibling::p")
+	List<WebElement> allQuestionTypeElements;
+
+	@FindBy(xpath = "//div[@class='se-wrapper']//div")
+	WebElement problemStatementElement;
+
+	@FindBy(xpath = "//button[text()='+ Add Option']")
+	WebElement addOptionBtnElement;
+
+	@FindBy(xpath = "//input[@placeholder='Type a label and press Enter']")
+	WebElement labelTextElement;
+
+	@FindBy(id = "skills")
+	WebElement skillInputElement;
+
+	@FindBy(xpath = "//input[@id='topics']")
+	WebElement topicsInputElement;
+
+	@FindBy(xpath = "//div[text()='Question published successfully']")
+	WebElement toastMessageElement;
+
+	@FindBy(xpath = "//input[@placeholder='Enter Problem Title']")
+	WebElement problemTitleElement;
+
+	@FindBy(id = "score")
+	WebElement scoreInputElement;
+
+	@FindBy(xpath = "//button[text()='Cancel']")
+	WebElement cancelBtnElement;
+
+	@FindBy(xpath = "//div[@role='presentation']/div[contains(@class,'MuiPaper-root')]/div/div[1]//*[name()='svg']")
+	WebElement closeBtnElement;
+
+	@FindBy(xpath = "//button[text()='Publish']")
+	WebElement publishBtnElement;
+
+	public CreateQuestionPage() {
+		PageFactory.initElements(driver, this);
+	}
 
 	public void clickOnQuestionType(String questionType) {
 		String questionTypelocator = String.format(this.questionTypelocator, questionType);
@@ -33,26 +68,26 @@ public class CreateQuestionPage extends ControlActions {
 	}
 
 	public int countOfVisibleQuetionType() {
-		return getAllElementCount(LocatorType.XPATH, allQuestionTypeTextLocator, true);
+		return getAllElementCount(allQuestionTypeElements, true);
 	}
 
 	public List<String> getAllQuestionTypeText() {
-		return getAllElementsText(LocatorType.XPATH, allQuestionTypeTextLocator, true);
+		return getAllElementsText(allQuestionTypeElements, true);
 	}
 
 	public void setProblemTitle(String problemTitle) {
-		setText(LocatorType.XPATH, problemTitleLocator, problemTitle);
-		String actualTitle = getInputElementText(LocatorType.XPATH, problemTitleLocator, true);
+		setText(problemTitleElement, true, problemTitle);
+		String actualTitle = getInputElementText(problemTitleElement, true);
 		if (!actualTitle.equals(problemTitle)) {
 			System.out.println("----Adjustment needed *****");
-			clearTextUsingBackSpace(LocatorType.XPATH, problemTitleLocator, actualTitle);
-			setText(LocatorType.XPATH, problemTitleLocator, problemTitle);
+			clearTextUsingBackSpace(problemTitleElement, actualTitle);
+			setText(problemTitleElement, false, problemTitle);
 		}
 	}
 
 	public void setProblemStatement(String text) {
-		super.clickOnElement(LocatorType.XPATH, problemStatementLocator, true);
-		setText(LocatorType.XPATH, problemStatementLocator, text);
+		clickOnElement(problemStatementElement, true);
+		setText(problemStatementElement, false, text);
 	}
 
 	public void clickOnDifficultyLevel(String level) {
@@ -76,15 +111,15 @@ public class CreateQuestionPage extends ControlActions {
 	}
 
 	public void setScore(int score) {
-		setText(LocatorType.ID, scoreInputLocator, false, String.valueOf(score));
+		setText(scoreInputElement, false, String.valueOf(score));
 	}
 
 	public void setScore(String score) {
-		setText(LocatorType.ID, scoreInputLocator, false, score);
+		setText(scoreInputElement, false, score);
 	}
 
 	public void clickOnAddOptionBtn() {
-		clickOnElement(LocatorType.XPATH, addOptionBtnLocator, false);
+		clickOnElement(addOptionBtnElement, false);
 	}
 
 	public String getOptionAtIndex(int index) {
@@ -93,29 +128,30 @@ public class CreateQuestionPage extends ControlActions {
 	}
 
 	public void setLabel(String labelText) {
-		setText(LocatorType.XPATH, labelTextLocator, labelText);
+		setText(labelTextElement, false, labelText);
 	}
 
 	public void setSkill(String skillName) {
-		setText(LocatorType.XPATH, skillInputLocator, skillName);
+		setText(skillInputElement, false, skillName);
 		String locator = String.format(selectSkillLocator, skillName);
 		clickOnElement(LocatorType.XPATH, locator, true);
 	}
 
 	public void setTopic(String topic) {
+		setText(topicsInputElement, true, topic);
 		String locator = String.format(topicLocator, topic);
 		clickOnElement(LocatorType.XPATH, locator, true);
 	}
 
 	public void clickOnPublishBtn() {
-		clickOnElement(LocatorType.XPATH, "//button[text()='Publish']", false);
+		clickOnElement(publishBtnElement, false);
 	}
 
 	public boolean isTostMessageDisplyed() {
-		return isElementDisplayed(LocatorType.XPATH, toastMessageLocator, true);
+		return isElementDisplayed(toastMessageElement, true);
 	}
 
 	public void closeCreateQuestionDrawer() {
-		clickOnElement(LocatorType.XPATH, closeBtnLocator, false);
+		clickOnElement(closeBtnElement, false);
 	}
 }

@@ -184,6 +184,16 @@ public class ControlActions {
 		}
 	}
 
+	protected void clearTextUsingBackSpace(WebElement e, String text) {
+		if (text.length() > 0) {
+			wait.until(ExpectedConditions.visibilityOf(e));
+			e.click();
+			for (int index = 0; index < text.length(); index++) {
+				e.sendKeys(Keys.BACK_SPACE);
+			}
+		}
+	}
+
 	protected void clickOnElement(LocatorType locatorType, String locatorValue, boolean isWaitRequired) {
 		WebElement e = getElement(locatorType, locatorValue, isWaitRequired);
 		if (!e.isDisplayed()) {
@@ -233,6 +243,13 @@ public class ControlActions {
 		return e.getDomAttribute("value");
 	}
 
+	protected String getInputElementText(WebElement e, boolean isWaitRequired) {
+		if (isWaitRequired) {
+			wait.until(ExpectedConditions.visibilityOf(e));
+		}
+		return e.getDomAttribute("value");
+	}
+
 	protected String getCurrentURL() {
 		return driver.getCurrentUrl();
 	}
@@ -246,8 +263,26 @@ public class ControlActions {
 		return listOfWebElements.size();
 	}
 
+	protected int getAllElementCount(List<WebElement> listOfWebElements, boolean isWaitRequired) {
+		if (isWaitRequired) {
+			wait.until(ExpectedConditions.visibilityOfAllElements(listOfWebElements));
+		}
+		return listOfWebElements.size();
+	}
+
 	protected List<String> getAllElementsText(LocatorType locatorType, String locatorValue, boolean isWaitRequired) {
 		List<WebElement> listOfWebElements = getElements(locatorType, locatorValue, isWaitRequired);
+		List<String> listOfElementText = new ArrayList<String>();
+		for (WebElement e : listOfWebElements) {
+			listOfElementText.add(e.getText());
+		}
+		return listOfElementText;
+	}
+
+	protected List<String> getAllElementsText(List<WebElement> listOfWebElements, boolean isWaitRequired) {
+		if (isWaitRequired) {
+			wait.until(ExpectedConditions.visibilityOfAllElements(listOfWebElements));
+		}
 		List<String> listOfElementText = new ArrayList<String>();
 		for (WebElement e : listOfWebElements) {
 			listOfElementText.add(e.getText());
