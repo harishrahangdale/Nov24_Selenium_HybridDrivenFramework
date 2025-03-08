@@ -15,10 +15,16 @@ public class CreateQuestionPage extends ControlActions {
 	private String labelTextLocator = "//input[@placeholder='Type a label and press Enter']";
 	private String skillInputLocator = "//input[@id='skills']";
 	private String selectSkillLocator = "//li[text()='%s']";
+	private String topicLocator = "//p[text()='%s']";
+	private String toastMessageLocator = "//div[text()='Question published successfully']";
+	private String problemTitleLocator = "//input[@placeholder='Enter Problem Title']";
+	private String scoreInputLocator = "score";
+	private String cancelBtnLocator = "//button[text()='Cancel']";
+	private String closeBtnLocator = "//div[@role='presentation']/div[contains(@class,'MuiPaper-root')]/div/div[1]//*[name()='svg']";
 
 	public void clickOnQuestionType(String questionType) {
 		String questionTypelocator = String.format(this.questionTypelocator, questionType);
-		super.clickOnElement(LocatorType.XPATH, questionTypelocator, true);
+		clickOnElement(LocatorType.XPATH, questionTypelocator, true);
 	}
 
 	public boolean isQuestionTypeBtnDisplayed(String questionType) {
@@ -34,6 +40,16 @@ public class CreateQuestionPage extends ControlActions {
 		return getAllElementsText(LocatorType.XPATH, allQuestionTypeTextLocator, true);
 	}
 
+	public void setProblemTitle(String problemTitle) {
+		setText(LocatorType.XPATH, problemTitleLocator, problemTitle);
+		String actualTitle = getInputElementText(LocatorType.XPATH, problemTitleLocator, true);
+		if (!actualTitle.equals(problemTitle)) {
+			System.out.println("----Adjustment needed *****");
+			clearTextUsingBackSpace(LocatorType.XPATH, problemTitleLocator, actualTitle);
+			setText(LocatorType.XPATH, problemTitleLocator, problemTitle);
+		}
+	}
+
 	public void setProblemStatement(String text) {
 		super.clickOnElement(LocatorType.XPATH, problemStatementLocator, true);
 		setText(LocatorType.XPATH, problemStatementLocator, text);
@@ -41,8 +57,8 @@ public class CreateQuestionPage extends ControlActions {
 
 	public void clickOnDifficultyLevel(String level) {
 		String locator = String.format(difficultyLevelLocator, level);
-		super.clickOnElement(LocatorType.XPATH, locator, true);
-		super.clickOnElement(LocatorType.XPATH, locator, true);
+		clickOnElement(LocatorType.XPATH, locator, true);
+		clickOnElement(LocatorType.XPATH, locator, true);
 	}
 
 	public void setOptionAtIndex(int index, String optionText) {
@@ -50,18 +66,25 @@ public class CreateQuestionPage extends ControlActions {
 		setText(LocatorType.XPATH, locator, true, optionText);
 	}
 
-	@Override
-	protected void clickOnElement(LocatorType locatorType, String locatorValue, boolean isWaitRequired) {
-		js.executeScript("document.getElementById('" + locatorValue + "').click()");
+	protected void clickOnElementUsingJs(LocatorType locatorType, String locatorValue, boolean isWaitRequired) {
+		js.executeScript("document.getElementById('" + locatorValue + "').click();");
 	}
 
 	public void setCorrectAnswerAtIndex(int index) {
 		String locator = String.format(correctAnswerIndexLocator, index);
-		clickOnElement(LocatorType.ID, locator, true);
+		clickOnElementUsingJs(LocatorType.ID, locator, true);
+	}
+
+	public void setScore(int score) {
+		setText(LocatorType.ID, scoreInputLocator, false, String.valueOf(score));
+	}
+
+	public void setScore(String score) {
+		setText(LocatorType.ID, scoreInputLocator, false, score);
 	}
 
 	public void clickOnAddOptionBtn() {
-		super.clickOnElement(LocatorType.XPATH, addOptionBtnLocator, false);
+		clickOnElement(LocatorType.XPATH, addOptionBtnLocator, false);
 	}
 
 	public String getOptionAtIndex(int index) {
@@ -76,7 +99,23 @@ public class CreateQuestionPage extends ControlActions {
 	public void setSkill(String skillName) {
 		setText(LocatorType.XPATH, skillInputLocator, skillName);
 		String locator = String.format(selectSkillLocator, skillName);
-		super.clickOnElement(LocatorType.XPATH, locator, true);
+		clickOnElement(LocatorType.XPATH, locator, true);
 	}
 
+	public void setTopic(String topic) {
+		String locator = String.format(topicLocator, topic);
+		clickOnElement(LocatorType.XPATH, locator, true);
+	}
+
+	public void clickOnPublishBtn() {
+		clickOnElement(LocatorType.XPATH, "//button[text()='Publish']", false);
+	}
+
+	public boolean isTostMessageDisplyed() {
+		return isElementDisplayed(LocatorType.XPATH, toastMessageLocator, true);
+	}
+
+	public void closeCreateQuestionDrawer() {
+		clickOnElement(LocatorType.XPATH, closeBtnLocator, false);
+	}
 }
